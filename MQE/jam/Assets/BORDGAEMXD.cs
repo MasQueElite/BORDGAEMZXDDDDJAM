@@ -16,26 +16,28 @@ public class BORDGAEMXD : MonoBehaviour
 	public Mesh[] seedsPos;
 
 	private int[] seeds = new int[16];
-	private int[] intialState = new int[16];
+	private int[] initialState = new int[16];
 	//private int limit = 10;
 	private int totalNumSeeds = 98;
+	private int[] mostSeeds = new int[7];
 
 	static int moduleIdCounter = 1;
 	int moduleId;
 	private bool moduleSolved;
 
-	void Awake()
-	{
-
+	void Awake() {
 		moduleId = moduleIdCounter++;
 	}
 
 	// Use this for initialization
-	void Start()
-	{
+	void Start() {
 		distribute(totalNumSeeds);
-		Debug.Log("Seeds:" + getTheMost()[0] +
-			"in position:" + getTheMost()[1] + ".");
+		Array.Copy(getTheMost(), mostSeeds, 7);
+		Debug.Log("Seeds:" +
+					mostSeeds.Max() +
+			      "in position:" +
+				    Array.IndexOf(mostSeeds, mostSeeds.Max()) +
+				  ".");
 	}
 
 	// Update is called once per frame
@@ -57,21 +59,20 @@ public class BORDGAEMXD : MonoBehaviour
 		Array.Copy(seeds, initialState, 7);
 	}
 
-	int[] getTheMost()
-	{
+	int[] getTheMost() {
 		int[] result = new int[7];
 
 		for (int holeNumber = 0; holeNumber < 7; holeNumber++)
 		{
-			playATurn(holeNumber);
-			getTotalPts(holeNumber);
+			playAturn(holeNumber);
+			getTotalPts(holeNumber, result);
 			reset();
 		}
-		return (result.Max(), find(result, result.Max());
+		return result;
 	}
 
-	void playAturn(int hn)
-	{
+	void playAturn(int hn) {
+
 		int hold = seeds[hn];
 		seeds[hn] = 0;
 		while (!(hn == 7 || seeds[hn] == 1 || seeds[14 - hn] == 0))
@@ -88,17 +89,13 @@ public class BORDGAEMXD : MonoBehaviour
 				seeds[14 - hn] = 0;
 			}
 			hold = seeds[hn];// Holds the current number of seeds in that current hole
-			seed[hn] = 0;
+			seeds[hn] = 0;
 		}
 	}
 
-	void getTotalPts(int hn)
-    {
+	void getTotalPts(int hn, int[] result){
 		for (int h = 0; h < 7; h++)
-        {
 			result[hn] += seeds[h];
-		}
-
 	}
 
 	void reset()
