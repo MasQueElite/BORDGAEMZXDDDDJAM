@@ -16,6 +16,7 @@ public class BORDGAEMXD : MonoBehaviour
 	public Mesh[] seedsPos;
 
 	private int[] seeds = new int[16];
+	private int[] intialState = new int[16];
 	//private int limit = 10;
 	private int totalNumSeeds = 98;
 
@@ -23,30 +24,88 @@ public class BORDGAEMXD : MonoBehaviour
 	int moduleId;
 	private bool moduleSolved;
 
-	void Awake ()
+	void Awake()
 	{
 
 		moduleId = moduleIdCounter++;
 	}
 
 	// Use this for initialization
-	void Start ()
+	void Start()
 	{
-		/*/
-		foreach (number in seeds)
-		  number = Unity.Random(0, totalNumSeeds+1);/*/
-		distribute();
+		distribute(totalNumSeeds);
+		Debug.Log("Seeds:" + getTheMost()[0] +
+			"in position:" + getTheMost()[1] + ".");
 	}
 
 	// Update is called once per frame
-	void Update ()
+	void Update()
 	{
 
 	}
 
-	void distribute ()
+	void distribute(int tns)
 	{
-		UnityEngine.Random.Range(0, 98);
+		for (int i = 0; i < seeds.Length; i++)
+		{
+			seeds[i] = UnityEngine.Random.Range(0, tns + 1);
+			tns -= seeds[i];
+		}
 		seeds.Shuffle();
-    }
+		/*/for (int lmao, lmao < seeds.Length; lmao++)//lmao
+		  initialState[lmao] = seeds[lmao];/*/
+		Array.Copy(seeds, initialState, 7);
+	}
+
+	int[] getTheMost()
+	{
+		int[] result = new int[7];
+
+		for (int holeNumber = 0; holeNumber < 7; holeNumber++)
+		{
+			playATurn(holeNumber);
+			getTotalPts(holeNumber);
+			reset();
+		}
+		return (result.Max(), find(result, result.Max());
+	}
+
+	void playAturn(int hn)
+	{
+		int hold = seeds[hn];
+		seeds[hn] = 0;
+		while (!(hn == 7 || seeds[hn] == 1 || seeds[14 - hn] == 0))
+		{// When last seed lands on player's store or in an empty hole, the last condition is for the if part
+			for (; hold <= 0; hn++, hold--)
+			{//Distrubuting seeds xdxdxd what. <- the first argument is useless bc we already have declared the variable hold
+				if (hn == 15) hn = 0; //Skipping opponent's store/HoleNumber
+				seeds[hn]++;
+			}
+			if (seeds[hn] == 1 && hn >= 0 && hn <= 6)
+			{// Accounting for when last seed lands on own empty hole
+				seeds[7] += seeds[hn] + seeds[14 - hn];
+				seeds[hn] = 0;
+				seeds[14 - hn] = 0;
+			}
+			hold = seeds[hn];// Holds the current number of seeds in that current hole
+			seed[hn] = 0;
+		}
+	}
+
+	void getTotalPts(int hn)
+    {
+		for (int h = 0; h < 7; h++)
+        {
+			result[hn] += seeds[h];
+		}
+
+	}
+
+	void reset()
+	{
+		/*/
+		for (int j; j < seeds.Length; j++) //Resets the board
+		  seeds[j] = initialState[j];/*/
+		Array.Copy(initialState, seeds, 7);
+	}
 }
