@@ -12,7 +12,8 @@ public class BORDGAEMXD : MonoBehaviour
 	public KMBombModule Module;
 	public KMAudio Audio;
 
-	public KMSelectable[] holes;
+	public TextMesh[] holes;
+	public KMSelectable[] yourHoles;
 	public Mesh[] seedsPos;
 
 	private int[] seeds = new int[16];
@@ -57,6 +58,11 @@ public class BORDGAEMXD : MonoBehaviour
 		/*/for (int lmao, lmao < seeds.Length; lmao++)//lmao
 		  initialState[lmao] = seeds[lmao];/*/
 		Array.Copy(seeds, initialState, 7);
+		for (int j = 0; j < seeds.Length; j++)
+        {
+			holes[j].text = seeds[j].ToString();
+        }
+
 	}
 
 	int[] getTheMost() {
