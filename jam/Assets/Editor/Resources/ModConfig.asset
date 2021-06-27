@@ -11,10 +11,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 615501dbe4f3fe94fbf4b564abb10237, type: 3}
   m_Name: ModConfig
   m_EditorClassIdentifier: 
-  id: template
-  title: Template
-  author: "M\xE1sQu\xE9\xC9lite"
-  description: 
-  version: 1.0
+  id: congkakMQEmeh
+  title: Congkak
+  author: "M\xE1sQu\xE9\xC9lite & ktane1"
+  description: wtf
+  version: 696969696969
   outputFolder: C:\Program Files\Steam\steamapps\common\Keep Talking and Nobody Explodes\mods
   previewImage: {fileID: 0}
