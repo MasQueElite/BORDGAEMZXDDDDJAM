@@ -22,6 +22,8 @@ public class BORDGAEMXD : MonoBehaviour
 	private int totalNumSeeds = 98;
 	private int[] mostSeeds = new int[7];
 
+	private bool myTurn = true;
+
 	static int moduleIdCounter = 1;
 	int moduleId;
 	private bool moduleSolved;
@@ -49,18 +51,35 @@ public class BORDGAEMXD : MonoBehaviour
 
 	void distribute(int tns)
 	{
-		for (int i = 0; i < seeds.Length; i++)
+		/*/for (int i = 0; i < seeds.Length; i++)
 		{
 			seeds[i] = UnityEngine.Random.Range(0, tns + 1);
 			tns -= seeds[i];
 		}
-		seeds.Shuffle();
+		seeds.Shuffle();/*/
 		/*/for (int lmao, lmao < seeds.Length; lmao++)//lmao
 		  initialState[lmao] = seeds[lmao];/*/
-		Array.Copy(seeds, initialState, 7);
-		for (int j = 0; j < seeds.Length; j++)
+		for (int i = 0; i < seeds.Length; i++) { seeds[i] = 7; }
+		int turns = UnityEngine.Random.Range(8, 15);
+		for (int j = 0; j <= turns; j++)
         {
-			holes[j].text = seeds[j].ToString();
+			if (myTurn == true)
+            {
+				int rng = UnityEngine.Random.Range(0, 7);
+				playAturn(rng);
+				myTurn = false;
+            }
+            else
+            {
+				int rng = UnityEngine.Random.Range(8, 15);
+				playAturn(rng);
+				myTurn = true;
+            }
+        }
+		Array.Copy(seeds, initialState, 7);
+		for (int k = 0; k < seeds.Length; k++)
+        {
+			holes[k].text = seeds[k].ToString();
         }
 
 	}
@@ -81,22 +100,45 @@ public class BORDGAEMXD : MonoBehaviour
 
 		int hold = seeds[hn];
 		seeds[hn] = 0;
-		while (!(hn == 7 || seeds[hn] == 1 || seeds[hn] == 0 || seeds[14 - hn] == 0))
-		{// When last seed lands on player's store or in an empty hole, the last condition is for the if part
+		if (myTurn = true)
+        {
+			while (!(hn == 7 || seeds[hn] == 1 || seeds[hn] == 0))
+			{// When last seed lands on player's store or in an empty hole, the last condition is for the if part
 				for (; hold > 0; hn++, hold--)
-			{//Distrubuting seeds xdxdxd what. <- the first argument is useless bc we already have declared the variable hold
-				if (hn == 15) hn = 0; //Skipping opponent's store/HoleNumber
-				seeds[hn]++;
-			}
-			if (seeds[hn] == 1 && hn >= 0 && hn <= 6)
-			{// Accounting for when last seed lands on own empty hole
-				seeds[7] += seeds[hn] + seeds[14 - hn];
+				{//Distrubuting seeds xdxdxd what. <- the first argument is useless bc we already have declared the variable hold
+					if (hn == 15) hn = 0; //Skipping opponent's store/HoleNumber
+					seeds[hn]++;
+				}
+				if (seeds[hn] == 1 && hn >= 0 && hn <= 6)
+				{// Accounting for when last seed lands on own empty hole
+					seeds[7] += seeds[hn] + seeds[14 - hn];
+					seeds[hn] = 0;
+					seeds[14 - hn] = 0;
+				}
+				hold = seeds[hn];// Holds the current number of seeds in that current hole
 				seeds[hn] = 0;
-				seeds[14 - hn] = 0;
 			}
-			hold = seeds[hn];// Holds the current number of seeds in that current hole
-			seeds[hn] = 0;
 		}
+        else
+        {
+			while (!(hn == 15 || seeds[hn] == 1 || seeds[hn] == 0))
+			{// When last seed lands on player's store or in an empty hole, the last condition is for the if part
+				for (; hold > 0; hn++, hold--)
+				{//Distrubuting seeds xdxdxd what. <- the first argument is useless bc we already have declared the variable hold
+					if (hn == 7) hn = 8; //Skipping opponent's store/HoleNumber
+					seeds[hn]++;
+				}
+				if (seeds[hn] == 1 && hn >= 0 && hn <= 6)
+				{// Accounting for when last seed lands on own empty hole
+					seeds[15] += seeds[hn] + seeds[14 - hn];
+					seeds[hn] = 0;
+					seeds[14 - hn] = 0;
+				}
+				hold = seeds[hn];// Holds the current number of seeds in that current hole
+				seeds[hn] = 0;
+			}
+		}
+		
 	}
 
 	void getTotalPts(int hn, int[] result){
