@@ -60,22 +60,24 @@ public class BORDGAEMXD : MonoBehaviour
 		/*/for (int lmao, lmao < seeds.Length; lmao++)//lmao
 		  initialState[lmao] = seeds[lmao];/*/
 		for (int i = 0; i < seeds.Length; i++) { seeds[i] = 7; }
+		seeds[7] = 0;
+		seeds[15] = 0;
 		int turns = UnityEngine.Random.Range(8, 15);
 		for (int j = 0; j <= turns; j++)
-        {
+		{
 			if (myTurn == true)
-            {
+			{
 				int rng = UnityEngine.Random.Range(0, 7);
 				playAturn(rng);
 				myTurn = false;
-            }
-            else
-            {
+			}
+			else
+			{
 				int rng = UnityEngine.Random.Range(8, 15);
 				playAturn(rng);
 				myTurn = true;
-            }
-        }
+			}
+		}
 		Array.Copy(seeds, initialState, 7);
 		for (int k = 0; k < seeds.Length; k++)
         {
@@ -102,7 +104,7 @@ public class BORDGAEMXD : MonoBehaviour
 		seeds[hn] = 0;
 		if (myTurn = true)
         {
-			while (!(hn == 7 || seeds[hn] == 1 || seeds[hn] == 0))
+			while (!(hn == 7 || seeds[hn+1] == 1 || seeds[hn+1] == 0) && hold > 0)
 			{// When last seed lands on player's store or in an empty hole, the last condition is for the if part
 				for (; hold > 0; hn++, hold--)
 				{//Distrubuting seeds xdxdxd what. <- the first argument is useless bc we already have declared the variable hold
