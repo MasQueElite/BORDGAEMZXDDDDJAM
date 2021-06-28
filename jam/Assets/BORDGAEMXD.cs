@@ -36,9 +36,9 @@ public class BORDGAEMXD : MonoBehaviour
 	void Start() {
 		distribute(totalNumSeeds);
 		Array.Copy(getTheMost(), mostSeeds, 7);
-		Debug.Log("Seeds:" +
+		Debug.Log("Seeds: " +
 					mostSeeds.Max() +
-			      "in position:" +
+			      "in position: " +
 				    Array.IndexOf(mostSeeds, mostSeeds.Max()) +
 				  ".");
 	}
@@ -122,12 +122,14 @@ public class BORDGAEMXD : MonoBehaviour
         {
 			while (!(hn == 15 || seeds[hn] == 1 || seeds[hn] == 0))
 			{// When last seed lands on player's store or in an empty hole, the last condition is for the if part
+				int hold = seeds[hn];
+				seeds[hn] = 0;
 				for (; hold > 0; hn++, hold--)
 				{//Distrubuting seeds xdxdxd what. <- the first argument is useless bc we already have declared the variable hold
 					if (hn == 7) hn = 8; //Skipping opponent's store/HoleNumber
 					seeds[hn]++;
 				}
-				if (seeds[hn] == 1 && hn >= 0 && hn <= 6)
+				if (seeds[hn] == 1 && hn >= 8 && hn <= 14)
 				{// Accounting for when last seed lands on own empty hole
 					seeds[15] += seeds[hn] + seeds[14 - hn];
 					seeds[hn] = 0;
