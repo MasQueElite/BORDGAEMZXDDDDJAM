@@ -99,13 +99,12 @@ public class BORDGAEMXD : MonoBehaviour
 	}
 
 	void playAturn(int hn) {
-
-		int hold = seeds[hn];
-		seeds[hn] = 0;
 		if (myTurn = true)
         {
-			while (!(hn == 7 || seeds[hn+1] == 1 || seeds[hn+1] == 0) && hold > 0)
+			while (!(hn == 7 || seeds[hn] == 1 || seeds[hn] == 0))
 			{// When last seed lands on player's store or in an empty hole, the last condition is for the if part
+				int hold = seeds[hn];
+				seeds[hn] = 0;
 				for (; hold > 0; hn++, hold--)
 				{//Distrubuting seeds xdxdxd what. <- the first argument is useless bc we already have declared the variable hold
 					if (hn == 15) hn = 0; //Skipping opponent's store/HoleNumber
@@ -117,8 +116,6 @@ public class BORDGAEMXD : MonoBehaviour
 					seeds[hn] = 0;
 					seeds[14 - hn] = 0;
 				}
-				hold = seeds[hn];// Holds the current number of seeds in that current hole
-				seeds[hn] = 0;
 			}
 		}
         else
