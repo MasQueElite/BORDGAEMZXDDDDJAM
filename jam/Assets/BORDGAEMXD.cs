@@ -43,7 +43,7 @@ public class BORDGAEMXD : MonoBehaviour
 				  ".");
 	}
 
-	// Update is called once per frame
+	//Update is called once per frame
 	void Update()
 	{
 
