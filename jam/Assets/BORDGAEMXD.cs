@@ -136,8 +136,6 @@ public class BORDGAEMXD : MonoBehaviour
 					seeds[hn] = 0;
 					seeds[14 - hn] = 0;
 				}
-				hold = seeds[hn];// Holds the current number of seeds in that current hole
-				seeds[hn] = 0;
 			}
 		}
 		
