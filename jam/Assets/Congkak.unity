@@ -156,10 +156,6 @@ Prefab:
       propertyPath: m_Name
       value: Congkak
       objectReference: {fileID: 0}
-    - target: {fileID: 1359011975980404, guid: 94753ace807eea84fa0a936a547b9fef, type: 2}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 94753ace807eea84fa0a936a547b9fef, type: 2}
   m_IsPrefabParent: 0
