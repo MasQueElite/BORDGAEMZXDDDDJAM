@@ -21,7 +21,7 @@ public class BORDGAEMXD : MonoBehaviour
 
 	private int[] mostSeeds = new int[7];
 
-	private bool turn = true;
+	private bool turn;
 	private int intedBool;
 
 	static int moduleIdCounter = 1;
@@ -40,9 +40,12 @@ public class BORDGAEMXD : MonoBehaviour
 		Array.Copy(getTheMost(), mostSeeds, mostSeeds.Length);
 		Debug.Log("Seeds: " +
 					mostSeeds.Max() +
-				  "in position: " +
-					Array.IndexOf(mostSeeds, mostSeeds.Max()) +
+				  " in hole: " +
+					(Array.IndexOf(mostSeeds, mostSeeds.Max()+1)) +
 				  ".");
+
+		foreach (int hole in initialState)
+			Debug.Log("Initial state: " + hole);
 	}
 
 	//Update is called once per frame
@@ -55,10 +58,14 @@ public class BORDGAEMXD : MonoBehaviour
 	{
 		seeds[7] = 0;
 		seeds[15] = 0;
-		int turns = UnityEngine.Random.Range(8, 15 + 1);
+		int rng;
+		int turns = UnityEngine.Random.Range(8, 15 + 1); //range: [x, y[
+		turn = turns % 2 == 0 ? false : true;
 		for (int j = 0; j <= turns; j++)
 		{
-			int rng = UnityEngine.Random.Range(getBoundsFromPlayer(turn, false), getBoundsFromPlayer(turn, true));
+            do rng = UnityEngine.Random.Range(getBoundsFromPlayer(turn, false), getBoundsFromPlayer(turn, true));
+			while (seeds[rng] <= 0);
+			
 			playAturn(rng, turn);
 			turn = !turn;
 		}
@@ -84,9 +91,14 @@ public class BORDGAEMXD : MonoBehaviour
 
 		for (int holeNumber = 0; holeNumber < 7; holeNumber++)
 		{
-			playAturn(holeNumber, false);
-			getTotalPts(holeNumber, result);
-			reset();
+			if (seeds[holeNumber] > 0)
+			{
+				playAturn(holeNumber, false);
+				Debug.Log("Total number of seeds: " + Enumerable.Sum(seeds) + " for hole: " + (holeNumber+1)); //debug
+													//this should ALWAYS be 98
+				getTotalPts(holeNumber, result);
+				reset();
+			}
 		}
 		return result;
 	}
@@ -96,8 +108,8 @@ public class BORDGAEMXD : MonoBehaviour
 		int[] bounds = { getBoundsFromPlayer(turn, false), getBoundsFromPlayer(turn, true), getBoundsFromPlayer(!turn, true) };
 			// = {lower bound from current player, upper bound from current player, upper bound from the opponent} --- I don't need the lower bound from the opponent
 
-		while (!(hn == bounds[1] || seeds[hn] == 1 || seeds[hn] == 0))
-		{// When last seed lands on player's store or in an empty hole, the last condition is for the if part
+		while (!(hn == bounds[1] || seeds[hn] == 1))
+		{// When last seed lands on player's store or in an empty hole
 			int hold = seeds[hn];
 			seeds[hn] = 0;
 			for (; hold > 0; hold--)
@@ -112,18 +124,19 @@ public class BORDGAEMXD : MonoBehaviour
 				seeds[bounds[1]] += seeds[hn] + seeds[14 - hn];
 				seeds[hn] = 0;
 				seeds[14 - hn] = 0;
+				break;
 			}
 		}
 	}
 
 	void getTotalPts (int hn, int[] result)
 	{
-		foreach (int hole in seeds)
-			result[hn] += hole;
+		for (int i = 0; i <= 7; i++)
+			result[hn] += seeds[i];
+		Debug.Log("Points gained if the player played this hole: " + result[hn] + " whith value: " + initialState[hn]);
 	}
 
-	void reset ()
-	{
-		Array.Copy(initialState, seeds, 7);
+	void reset () {
+		Array.Copy(initialState, seeds, initialState.Length);
 	}
 }

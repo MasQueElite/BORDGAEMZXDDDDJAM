@@ -36,6 +36,7 @@ GameObject:
   - component: {fileID: 4138498256695936}
   - component: {fileID: 33223550202896864}
   - component: {fileID: 23630801788737550}
+  - component: {fileID: 114301657479187892}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -111,3 +112,16 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1688628502146906}
   m_Mesh: {fileID: 4300000, guid: 1a393fa1c1ef1524d8a3972fbfb37832, type: 3}
+--- !u!114 &114301657479187892
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1688628502146906}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1005838349, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShaderNames:
+  - KT/Mobile/DiffuseTint
