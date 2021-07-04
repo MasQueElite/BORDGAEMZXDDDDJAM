@@ -29,7 +29,7 @@ public class BORDGAEMXD : MonoBehaviour
 	int moduleId;
 	private bool moduleSolved = false;
 
-	void Awake()
+	void Awake ()
 	{
 		moduleId = moduleIdCounter++;
 		foreach (KMSelectable hole in yourHoles)
@@ -40,7 +40,7 @@ public class BORDGAEMXD : MonoBehaviour
 	}
 
 	// Use this for initialization
-	void Start()
+	void Start ()
 	{
 		distribute();
 		logArray(seeds, "Initial state: ");
@@ -54,12 +54,12 @@ public class BORDGAEMXD : MonoBehaviour
 	}
 
 	//Update is called once per frame
-	void Update()
+	void Update ()
 	{
 
 	}
 
-	void logArray(int[] arr, string extraMsg = "")
+	void logArray (int[] arr, string extraMsg = "")
 	{
 		string str = "";
 		for (int i = 0; i < arr.Length; i++)
@@ -68,7 +68,7 @@ public class BORDGAEMXD : MonoBehaviour
 		Debug.Log(extraMsg + str);
 	}
 
-	void distribute()
+	void distribute ()
 	{
 		seeds[7] = 0;
 		seeds[15] = 0;
@@ -95,18 +95,18 @@ public class BORDGAEMXD : MonoBehaviour
 		}
 	}
 
-	int int2bool(bool originalBool)
+	int int2bool (bool originalBool)
 	{
 		return originalBool ? 1 : 0;
 	}
 
-	int getBoundsFromPlayer(bool player, bool upperBound)
+	int getBoundsFromPlayer (bool player, bool upperBound)
 	{ //P0 is the human; P1 is the machine; P = player
 		if (upperBound) return int2bool(!player) * 8 + 7; // = player's store/main hole
 		else return int2bool(player) * 8;
 	}
 
-	int[] getTheMost()
+	int[] getTheMost ()
 	{
 		int[] result = new int[7];
 
@@ -125,7 +125,7 @@ public class BORDGAEMXD : MonoBehaviour
 		return result;
 	}
 
-	void playAturn(int hn, bool turn)
+	void playAturn (int hn, bool turn)
 	{
 		int[] bounds = { getBoundsFromPlayer(turn, false), getBoundsFromPlayer(turn, true), getBoundsFromPlayer(!turn, false), getBoundsFromPlayer(!turn, true) };
 		// = {lower bound from current player, upper bound from current player, lower bound from the opponent, upper bound from the opponent}
@@ -153,7 +153,7 @@ public class BORDGAEMXD : MonoBehaviour
 		}
 	}
 
-	void getTotalPts(int hn, int[] result)
+	void getTotalPts (int hn, int[] result)
 	{
 		for (int i = 0; i < 7; i++)
 			result[hn] += seeds[i];
@@ -161,12 +161,12 @@ public class BORDGAEMXD : MonoBehaviour
 		if (logging) Debug.Log("Points gained if the player played this hole: " + result[hn] + " with value: " + initialState[hn]);
 	}
 
-	void reset()
+	void reset ()
 	{
 		Array.Copy(initialState, seeds, initialState.Length);
 	}
 
-	void holeHandler(KMSelectable hole)
+	void holeHandler (KMSelectable hole)
 	{
 		if (moduleSolved == false)
 		{
