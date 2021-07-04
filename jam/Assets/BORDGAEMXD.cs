@@ -84,14 +84,14 @@ public class BORDGAEMXD : MonoBehaviour
 			turn = !turn;
 		}
 		Array.Copy(seeds, initialState, seeds.Length);
-		for (int i = 0; i < seedsPlacement.Length; i++)
+		for (int k = 0; k < pivot.Length; k++)
 		{
-			for (int k = 0; k < pivot.Length; k++)
-			{
+			for (int l = 0; l < seeds[k]; l++)
+            {
 				Vector3 newPos = (new Vector3(UnityEngine.Random.Range((pivot[k].transform.position.x - 0.003f), (pivot[k].transform.position.x + 0.003f)), 0.09f, UnityEngine.Random.Range((pivot[k].transform.position.z - 0.003f), (pivot[k].transform.position.z + 0.003f))));
-				seedsPlacement[i].transform.position = newPos;
+				seedsPlacement[l].transform.position = newPos;
 			}
-
+				
 		}
 	}
 
