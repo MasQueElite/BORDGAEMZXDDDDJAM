@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using KModkit;
+using UnityEngine.EventSystems;
+using NUnit.Framework.Internal.Commands;
 
 public class BORDGAEMXD : MonoBehaviour
 {
@@ -16,6 +18,7 @@ public class BORDGAEMXD : MonoBehaviour
 	public KMSelectable[] yourHoles;
 	public GameObject[] seedsPlacement;
 	public GameObject[] pivot;
+	public Renderer ReferenceSeed;
 
 	private int[] seeds = Enumerable.Repeat(7, 16).ToArray();
 	private int[] initialState = new int[16];
@@ -28,6 +31,11 @@ public class BORDGAEMXD : MonoBehaviour
 	static int moduleIdCounter = 1;
 	int moduleId;
 	private bool moduleSolved = false;
+	string[] funnyPhrases = {"What are you doing. Stop.",
+							 "No, you can't eat those \"seeds\"",
+							 "Please, go solve the rest of the bomb; this module is already solved",
+							 "What do you want from me? TwT",
+							 "If you REALLY are bored, better check THIS out: https://www.youtube.com/watch?v=o-YBDTqX_ZU"};
 
 	void Awake ()
 	{
@@ -35,7 +43,7 @@ public class BORDGAEMXD : MonoBehaviour
 		foreach (KMSelectable hole in yourHoles)
 		{
 			KMSelectable selectedHole = hole;
-			hole.OnInteract += delegate () { holeHandler(hole); return false; };
+			hole.OnInteract += delegate () { holeHandler(selectedHole, mostSeeds); return false; };
 		}
 	}
 
@@ -84,18 +92,41 @@ public class BORDGAEMXD : MonoBehaviour
 			turn = !turn;
 		}
 		Array.Copy(seeds, initialState, seeds.Length);
-		for (int k = 0; k < pivot.Length; k++)
+
+		colorSeeds();
+		positionSeeds();
+	}
+
+    void positionSeeds ()
+    {
+		float smallRadius = Math.Abs(pivot[0].transform.position.x - pivot[pivot.Length - 1].transform.position.x);
+		Debug.Log(pivot[0].name + " and " + pivot[pivot.Length - 1].name + " give a distance of: " + smallRadius);
+		float seedDiameter = ReferenceSeed.bounds.size.x;
+		Debug.Log("The diameter of a seed is: " + seedDiameter);
+		for (int k = 0, s = 0; k < pivot.Length-1; k++)
 		{
-			for (int l = 0; l < seeds[k]; l++)
+			for (int l = 0; l < seeds[k]; l++, s++)
 			{
-				Vector3 newPos = (new Vector3(UnityEngine.Random.Range((pivot[k].transform.position.x - 0.003f), (pivot[k].transform.position.x + 0.003f)), 0.09f, UnityEngine.Random.Range((pivot[k].transform.position.z - 0.003f), (pivot[k].transform.position.z + 0.003f))));
-				seedsPlacement[l].transform.position = newPos;
+				Vector3 newPos = (new Vector3(UnityEngine.Random.Range(
+												(pivot[k].transform.position.x - (smallRadius + seedDiameter)), //0.003f
+												(pivot[k].transform.position.x + (smallRadius + seedDiameter))),
+											 0.09f,
+											 UnityEngine.Random.Range(
+												 (pivot[k].transform.position.z - (smallRadius + seedDiameter)),
+												 (pivot[k].transform.position.z + (smallRadius + seedDiameter)))));
+				seedsPlacement[s].transform.position = newPos;
+				Debug.Log("In hole " + (seeds[k] + 1) + " there is " + pivot[k].name + "; placing seed number " + (s + 1));
 			}
 
 		}
 	}
 
-	int int2bool (bool originalBool)
+	void colorSeeds()
+    {
+		Debug.Log("Done. All are white.");
+    }
+
+    int int2bool (bool originalBool)
 	{
 		return originalBool ? 1 : 0;
 	}
@@ -166,11 +197,11 @@ public class BORDGAEMXD : MonoBehaviour
 		Array.Copy(initialState, seeds, initialState.Length);
 	}
 
-	void holeHandler (KMSelectable hole)
+	void holeHandler (KMSelectable hole, int[] ms)
 	{
 		if (moduleSolved == false)
 		{
-			if (hole == yourHoles[mostSeeds.Max() + 1]) //Enter most seeds hole here
+			if (hole.name[hole.name.Length - 1] - '0' == Array.IndexOf(ms, ms.Max()) + 1) //Enter most seeds hole here
 			{                         //That is mostSeeds.Max()) + 1 --- in line 50
 				moduleSolved = true;
 				Debug.Log("You selected the correct hole. Module solved.");
@@ -182,5 +213,7 @@ public class BORDGAEMXD : MonoBehaviour
 				Module.HandleStrike();
 			}
 		}
+		else
+			Debug.Log(funnyPhrases[UnityEngine.Random.Range(0, funnyPhrases.Length)]);
 	}
 }
