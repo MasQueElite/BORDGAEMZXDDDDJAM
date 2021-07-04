@@ -23,52 +23,52 @@ public class BORDGAEMXD : MonoBehaviour
 	private int[] mostSeeds = new int[7];
 
 	private bool turn;
-	private int intedBool;
+	private bool logging;
 
 	static int moduleIdCounter = 1;
 	int moduleId;
 	private bool moduleSolved = false;
 
-	void Awake ()
+	void Awake()
 	{
 		moduleId = moduleIdCounter++;
 		foreach (KMSelectable hole in yourHoles)
-        {
+		{
 			KMSelectable selectedHole = hole;
 			hole.OnInteract += delegate () { holeHandler(hole); return false; };
-        }
+		}
 	}
 
 	// Use this for initialization
 	void Start()
 	{
 		distribute();
+		logArray(seeds, "Initial state: ");
 		Array.Copy(getTheMost(), mostSeeds, mostSeeds.Length);
+		logArray(mostSeeds, "Total points after playing each hole: ");
 		Debug.Log("Seeds: " +
 					mostSeeds.Max() +
 				  " in hole: " +
 					(Array.IndexOf(mostSeeds, mostSeeds.Max()) + 1) +
 				  ".");
-
-		logArray(seeds);
 	}
 
 	//Update is called once per frame
-	void Update ()
+	void Update()
 	{
 
 	}
 
-	void logArray(int[] arr)
+	void logArray(int[] arr, string extraMsg = "")
 	{
 		string str = "";
 		for (int i = 0; i < arr.Length; i++)
 			str += arr[i] + " ";
 
-		Debug.Log(str);
+		Debug.Log(extraMsg + str);
 	}
 
-	void distribute ()
+	void distribute()
 	{
 		seeds[7] = 0;
 		seeds[15] = 0;
@@ -87,11 +87,11 @@ public class BORDGAEMXD : MonoBehaviour
 		for (int k = 0; k < pivot.Length; k++)
 		{
 			for (int l = 0; l < seeds[k]; l++)
-            {
+			{
 				Vector3 newPos = (new Vector3(UnityEngine.Random.Range((pivot[k].transform.position.x - 0.003f), (pivot[k].transform.position.x + 0.003f)), 0.09f, UnityEngine.Random.Range((pivot[k].transform.position.z - 0.003f), (pivot[k].transform.position.z + 0.003f))));
 				seedsPlacement[l].transform.position = newPos;
 			}
-				
+
 		}
 	}
 
@@ -114,10 +114,10 @@ public class BORDGAEMXD : MonoBehaviour
 		{
 			if (seeds[holeNumber] > 0)
 			{
-				Debug.Log("----------------- PLAYING HOLE " + (holeNumber + 1) + ":");
+				if (logging) Debug.Log("----------------- PLAYING HOLE " + (holeNumber + 1) + ":");
 				playAturn(holeNumber, false);
-				Debug.Log("Total number of seeds: " + Enumerable.Sum(seeds) + " for hole: " + (holeNumber + 1)); //debug
-																												 //this should ALWAYS be 98
+				if (logging) Debug.Log("Total number of seeds: " + Enumerable.Sum(seeds) + " for hole: " + (holeNumber + 1)); //debug
+																															  //this should ALWAYS be 98
 				getTotalPts(holeNumber, result);
 				reset();
 			}
@@ -141,15 +141,13 @@ public class BORDGAEMXD : MonoBehaviour
 				else if (hn >= 16) hn = 0;
 				seeds[hn]++;
 			}
-			Debug.Log("Ended in hole: " + (hn + 1));
-			logArray(seeds);
+			if (logging) { Debug.Log("Ended in hole: " + (hn + 1)); logArray(seeds); }
 			if (seeds[hn] == 1 && hn >= bounds[0] && hn < bounds[3])
 			{// Accounting for when last seed lands on own empty hole
 				seeds[bounds[1]] += seeds[hn] + seeds[14 - hn];
 				seeds[hn] = 0;
 				seeds[14 - hn] = 0;
-				Debug.Log("Capturing hole " + (14 - hn + 1));
-				logArray(seeds);
+				if (logging) { Debug.Log("Capturing hole " + (14 - hn + 1)); logArray(seeds); }
 				break;
 			}
 		}
@@ -159,8 +157,8 @@ public class BORDGAEMXD : MonoBehaviour
 	{
 		for (int i = 0; i < 7; i++)
 			result[hn] += seeds[i];
-			result[hn] += seeds[seeds.Length-1];
-		Debug.Log("Points gained if the player played this hole: " + result[hn] + " with value: " + initialState[hn]);
+		result[hn] += seeds[seeds.Length - 1];
+		if (logging) Debug.Log("Points gained if the player played this hole: " + result[hn] + " with value: " + initialState[hn]);
 	}
 
 	void reset()
@@ -169,11 +167,11 @@ public class BORDGAEMXD : MonoBehaviour
 	}
 
 	void holeHandler(KMSelectable hole)
-    {
+	{
 		if (moduleSolved == false)
 		{
-			if (hole == yourHoles[0]) //Enter most seeds hole here
-			{						  //That is mostSeeds.Max()) + 1 --- in line 50
+			if (hole == yourHoles[mostSeeds.Max() + 1]) //Enter most seeds hole here
+			{                         //That is mostSeeds.Max()) + 1 --- in line 50
 				moduleSolved = true;
 				Debug.Log("You selected the correct hole. Module solved.");
 				Module.HandlePass();
@@ -184,5 +182,5 @@ public class BORDGAEMXD : MonoBehaviour
 				Module.HandleStrike();
 			}
 		}
-    }
+	}
 }
