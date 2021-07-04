@@ -26,7 +26,8 @@ public class BORDGAEMXD : MonoBehaviour
 	private int[] mostSeeds = new int[7];
 
 	private bool turn;
-	private bool logging;
+	private bool codeLogging;
+	private bool visualLogging = true;
 
 	static int moduleIdCounter = 1;
 	int moduleId;
@@ -100,22 +101,22 @@ public class BORDGAEMXD : MonoBehaviour
     void positionSeeds ()
     {
 		float smallRadius = Math.Abs(pivot[0].transform.position.x - pivot[pivot.Length - 1].transform.position.x);
-		Debug.Log(pivot[0].name + " and " + pivot[pivot.Length - 1].name + " give a distance of: " + smallRadius);
-		float seedDiameter = ReferenceSeed.bounds.size.x;
-		Debug.Log("The diameter of a seed is: " + seedDiameter);
+		if (visualLogging) Debug.Log(pivot[0].name + " and " + pivot[pivot.Length - 1].name + " give a distance of: " + smallRadius);
+		float seedDiameter = ReferenceSeed.bounds.size.x*2;
+		if (visualLogging) Debug.Log("The diameter of a seed is: " + seedDiameter);
 		for (int k = 0, s = 0; k < pivot.Length-1; k++)
 		{
 			for (int l = 0; l < seeds[k]; l++, s++)
 			{
 				Vector3 newPos = (new Vector3(UnityEngine.Random.Range(
-												(pivot[k].transform.position.x - (smallRadius + seedDiameter)), //0.003f
-												(pivot[k].transform.position.x + (smallRadius + seedDiameter))),
+												(pivot[k].transform.position.x - (smallRadius - seedDiameter)), //0.003f
+												(pivot[k].transform.position.x + (smallRadius - seedDiameter))),
 											 0.09f,
 											 UnityEngine.Random.Range(
-												 (pivot[k].transform.position.z - (smallRadius + seedDiameter)),
-												 (pivot[k].transform.position.z + (smallRadius + seedDiameter)))));
+												 (pivot[k].transform.position.z - (smallRadius - seedDiameter)),
+												 (pivot[k].transform.position.z + (smallRadius - seedDiameter)))));
 				seedsPlacement[s].transform.position = newPos;
-				Debug.Log("In hole " + (seeds[k] + 1) + " there is " + pivot[k].name + "; placing seed number " + (s + 1));
+				if (visualLogging) Debug.Log("In hole " + (k + 1) + " there is " + pivot[k].name + "; placing seed number " + (s + 1));
 			}
 
 		}
@@ -145,9 +146,9 @@ public class BORDGAEMXD : MonoBehaviour
 		{
 			if (seeds[holeNumber] > 0)
 			{
-				if (logging) Debug.Log("----------------- PLAYING HOLE " + (holeNumber + 1) + ":");
+				if (codeLogging) Debug.Log("----------------- PLAYING HOLE " + (holeNumber + 1) + ":");
 				playAturn(holeNumber, false);
-				if (logging) Debug.Log("Total number of seeds: " + Enumerable.Sum(seeds) + " for hole: " + (holeNumber + 1)); //debug
+				if (codeLogging) Debug.Log("Total number of seeds: " + Enumerable.Sum(seeds) + " for hole: " + (holeNumber + 1)); //debug
 																															  //this should ALWAYS be 98
 				getTotalPts(holeNumber, result);
 				reset();
@@ -172,13 +173,13 @@ public class BORDGAEMXD : MonoBehaviour
 				else if (hn >= 16) hn = 0;
 				seeds[hn]++;
 			}
-			if (logging) { Debug.Log("Ended in hole: " + (hn + 1)); logArray(seeds); }
+			if (codeLogging) { Debug.Log("Ended in hole: " + (hn + 1)); logArray(seeds); }
 			if (seeds[hn] == 1 && hn >= bounds[0] && hn < bounds[3])
 			{// Accounting for when last seed lands on own empty hole
 				seeds[bounds[1]] += seeds[hn] + seeds[14 - hn];
 				seeds[hn] = 0;
 				seeds[14 - hn] = 0;
-				if (logging) { Debug.Log("Capturing hole " + (14 - hn + 1)); logArray(seeds); }
+				if (codeLogging) { Debug.Log("Capturing hole " + (14 - hn + 1)); logArray(seeds); }
 				break;
 			}
 		}
@@ -189,7 +190,7 @@ public class BORDGAEMXD : MonoBehaviour
 		for (int i = 0; i < 7; i++)
 			result[hn] += seeds[i];
 		result[hn] += seeds[seeds.Length - 1];
-		if (logging) Debug.Log("Points gained if the player played this hole: " + result[hn] + " with value: " + initialState[hn]);
+		if (codeLogging) Debug.Log("Points gained if the player played this hole: " + result[hn] + " with value: " + initialState[hn]);
 	}
 
 	void reset ()
