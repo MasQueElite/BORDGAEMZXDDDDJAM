@@ -157,8 +157,9 @@ public class BORDGAEMXD : MonoBehaviour
 
 	void getTotalPts(int hn, int[] result)
 	{
-		for (int i = 0; i <= 7; i++)
+		for (int i = 0; i < 7; i++)
 			result[hn] += seeds[i];
+			result[hn] += seeds[seeds.Length-1];
 		Debug.Log("Points gained if the player played this hole: " + result[hn] + " with value: " + initialState[hn]);
 	}
 
@@ -172,7 +173,7 @@ public class BORDGAEMXD : MonoBehaviour
 		if (moduleSolved == false)
 		{
 			if (hole == yourHoles[0]) //Enter most seeds hole here
-			{
+			{						  //That is mostSeeds.Max()) + 1 --- in line 50
 				moduleSolved = true;
 				Debug.Log("You selected the correct hole. Module solved.");
 				Module.HandlePass();
