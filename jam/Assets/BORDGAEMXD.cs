@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using KModkit;
-using UnityEngine.EventSystems;
-using NUnit.Framework.Internal.Commands;
 
 public class BORDGAEMXD : MonoBehaviour
 {
@@ -27,7 +25,7 @@ public class BORDGAEMXD : MonoBehaviour
 
 	private bool turn;
 	private bool codeLogging;
-	private bool visualLogging = true;
+	private bool visualLogging;
 	private bool collide;
 
 	static int moduleIdCounter = 1;
@@ -49,24 +47,18 @@ public class BORDGAEMXD : MonoBehaviour
 		}
 	}
 
-	// Use this for initialization
 	void Start ()
 	{
 		distribute();
 		logArray(seeds, "Initial state: ");
 		Array.Copy(getTheMost(), mostSeeds, mostSeeds.Length);
 		logArray(mostSeeds, "Total points after playing each hole: ");
-		Debug.Log("Seeds: " +
+		/*/Debug.LogFormat("The maximum seeds in a hole is: " +
 					mostSeeds.Max() +
-				  " in hole: " +
+				  ", which is in the hole: " +
 					(Array.IndexOf(mostSeeds, mostSeeds.Max()) + 1) +
-				  ".");
-	}
-
-	//Update is called once per frame
-	void Update ()
-	{
-
+				  ".");/*/
+		Debug.LogFormat("The maximum seeds in a hole is: {0}, which is in the hole: {1}.", mostSeeds.Max(), ((Array.IndexOf(mostSeeds, mostSeeds.Max())) + 1));
 	}
 
 	void logArray (int[] arr, string extraMsg = "")
@@ -75,7 +67,7 @@ public class BORDGAEMXD : MonoBehaviour
 		for (int i = 0; i < arr.Length; i++)
 			str += arr[i] + " ";
 
-		Debug.Log(extraMsg + str);
+		Debug.LogFormat(extraMsg, str);
 	}
 
 	void distribute ()
@@ -95,22 +87,23 @@ public class BORDGAEMXD : MonoBehaviour
 		}
 		Array.Copy(seeds, initialState, seeds.Length);
 
-		colorSeeds();
+		//colorSeeds();
 		positionSeeds();
 	}
 
     void positionSeeds ()
     {
 		float smallRadius = Math.Abs(pivot[0].transform.position.x - pivot[16].transform.position.x);
-		float storeSmallRadius = Math.Abs(pivot[15].transform.position.z - pivot[18].transform.position.z);
-		float storeLargeRadius = Math.Abs(pivot[15].transform.position.x - pivot[17].transform.position.x);
-		if (visualLogging) Debug.Log(pivot[0].name + " and " + pivot[pivot.Length - 3].name + " give a distance of: " + smallRadius);
+		float smallHeight = Math.Abs(pivot[0].transform.position.y - pivot[16].transform.position.y);
+		//float storeSmallRadius = Math.Abs(pivot[15].transform.position.z - pivot[18].transform.position.z);
+		//float storeLargeRadius = Math.Abs(pivot[15].transform.position.x - pivot[17].transform.position.x);
+		if (visualLogging) Debug.Log(pivot[0].name + " and " + pivot[16].name + " give a distance of: " + smallRadius);
 		float seedDiameter = ReferenceSeed.bounds.size.x*2;
 		if (visualLogging) Debug.Log("The diameter of a seed is: " + seedDiameter);
-		for (int k = 0, s = 0; k < pivot.Length-3; k++)
+		for (int k = 0, s = 0; k < 16; k++)
 		{
 			for (int l = 0; l < seeds[k]; l++, s++)
-			{
+			{/*/
 				if (k == 7 || k == 15)
                 {
 					Vector3 newPos = (new Vector3(UnityEngine.Random.Range(
@@ -121,37 +114,59 @@ public class BORDGAEMXD : MonoBehaviour
 												 (pivot[k].transform.position.z - (storeSmallRadius - seedDiameter)),
 												 (pivot[k].transform.position.z + (storeSmallRadius - seedDiameter)))));
 					seedsPlacement[s].transform.position = newPos;
-					/*/while (!collide)
+					while (!collide)
                     {
 						Vector3 newY = new Vector3(seedsPlacement[s].transform.position.x, (seedsPlacement[s].transform.position.y - 0.001f), seedsPlacement[s].transform.position.z);
 						seedsPlacement[s].transform.position = newY;
 					}
 					collide = false;/*/
-				}
-                else
-                {
+				//}
+                //else
+                //{
 					Vector3 newPos = (new Vector3(UnityEngine.Random.Range(
-												(pivot[k].transform.position.x - (smallRadius - seedDiameter)), //0.003f
+												(pivot[k].transform.position.x - (smallRadius - seedDiameter)),
 												(pivot[k].transform.position.x + (smallRadius - seedDiameter))),
-											 0.03f,
+											 (pivot[0].transform.position.y + seedDiameter/2),
 											 UnityEngine.Random.Range(
 												 (pivot[k].transform.position.z - (smallRadius - seedDiameter)),
 												 (pivot[k].transform.position.z + (smallRadius - seedDiameter)))));
 					seedsPlacement[s].transform.position = newPos;
-					/*/while (!collide)
-					{
-						Vector3 newY = new Vector3(seedsPlacement[s].transform.position.x, (seedsPlacement[s].transform.position.y - 0.001f), seedsPlacement[s].transform.position.z);
-						seedsPlacement[s].transform.position = newY;
-					}
-					collide = false;/*/
-				}
-				
-				if (visualLogging) Debug.Log("In hole " + (k + 1) + " there is " + pivot[k].name + "; placing seed number " + (s + 1));
-			}
+				/*/
+						newPos = (new Vector3(seedsPlacement[s].transform.position.x,
+											 (pivot[0].transform.position.y + seedDiameter/4) +
+												smallHeight*pivot[0].transform.position.x/seedsPlacement[s].transform.position.x,
+											 seedsPlacement[s].transform.position.z));
+				seedsPlacement[s].transform.position = newPos;
+				seedsPlacement[s].transform.position = pivot[0].transform.position;
+				seedsPlacement[s].transform.position = new Vector3(UnityEngine.Random.Range(
+												(pivot[0].transform.position.x - (smallRadius - seedDiameter / 4)),
+												(pivot[0].transform.position.x + (smallRadius - seedDiameter / 4))),
+																	0,
+																	seedsPlacement[s].transform.position.z);
+				newPos = (new Vector3(seedsPlacement[s].transform.position.x,
+				((pivot[0].transform.position.y + seedDiameter / 4) +
+				Math.Abs(seedsPlacement[s].transform.position.x - pivot[0].transform.position.x)),
+				seedsPlacement[s].transform.position.z));
+				seedsPlacement[s].transform.position = newPos;
 
+				Debug.Log("Base height: " + (pivot[0].transform.position.y + seedDiameter / 4) +
+						  "; subtract seed Xpos " + seedsPlacement[s].transform.position.x +
+						  " and pivot Xpos " + pivot[0].transform.position.x + " gives: " +
+						  Math.Abs(seedsPlacement[s].transform.position.x - pivot[0].transform.position.x));/*/
+
+				/*/while (!collide)
+				{
+					Vector3 newY = new Vector3(seedsPlacement[s].transform.position.x, (seedsPlacement[s].transform.position.y - 0.001f), seedsPlacement[s].transform.position.z);
+					seedsPlacement[s].transform.position = newY;
+				}
+				collide = false;/*/
+				//}
+
+				//if (visualLogging) Debug.Log("In hole " + (k + 1) + " there is " + pivot[k].name + "; placing seed number " + (s + 1));
+			}
 		}
 	}
-
+	/*/
 	void colorSeeds()
     {
 		Color32[] colors = new Color32[10] { new Color32(255, 0, 0, 255), new Color32(0, 255, 0, 255), new Color32(0, 0, 255, 255), new Color32(255, 0, 0, 255), new Color32(255, 255, 0, 255), new Color32(255, 0, 255, 255), new Color32(0, 255, 255, 255), new Color32(255, 255, 255, 255), new Color32(0, 0, 0, 255), new Color32(128, 128, 128, 255) };
@@ -166,7 +181,8 @@ public class BORDGAEMXD : MonoBehaviour
 	void OnCollisionEnter(Collision collision)
     {
 		collide = true;
-    }
+    }/*/
+
     int int2bool (bool originalBool)
 	{
 		return originalBool ? 1 : 0;
@@ -240,22 +256,22 @@ public class BORDGAEMXD : MonoBehaviour
 
 	void holeHandler (KMSelectable hole, int[] ms)
 	{
-		Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
+		int maxSeeds = ms.Max();
 		if (moduleSolved == false)
 		{
-			if (hole.name[hole.name.Length - 1] - '0' == Array.IndexOf(ms, ms.Max()) + 1) //Enter most seeds hole here
-			{                         //That is mostSeeds.Max()) + 1 --- in line 50
+			if (ms[hole.name[hole.name.Length - 1] - '0' - 1] == ms.Max())
+			{
 				moduleSolved = true;
-				Debug.Log("You selected the correct hole. Module solved.");
+				Debug.LogFormat("You selected the correct hole. Module solved.");
 				Module.HandlePass();
 			}
 			else
 			{
-				Debug.Log("You selected the wrong hole. Strike.");
+				Debug.LogFormat("You selected the wrong hole. Strike.");
 				Module.HandleStrike();
 			}
 		}
 		else
-			Debug.Log(funnyPhrases[UnityEngine.Random.Range(0, funnyPhrases.Length)]);
+			Debug.LogFormat(funnyPhrases[UnityEngine.Random.Range(0, funnyPhrases.Length)]);
 	}
 }
