@@ -200,6 +200,7 @@ public class BORDGAEMXD : MonoBehaviour
 
 	void holeHandler (KMSelectable hole, int[] ms)
 	{
+		Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
 		if (moduleSolved == false)
 		{
 			if (hole.name[hole.name.Length - 1] - '0' == Array.IndexOf(ms, ms.Max()) + 1) //Enter most seeds hole here
