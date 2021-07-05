@@ -120,7 +120,12 @@ public class BORDGAEMXD : MonoBehaviour
 											 UnityEngine.Random.Range(
 												 (pivot[k].transform.position.z - (storeSmallRadius - seedDiameter)),
 												 (pivot[k].transform.position.z + (storeSmallRadius - seedDiameter)))));
-					seedsPlacement[s].transform.position = newPos;
+					while (!collide)
+                    {
+						Vector3 newY = new Vector3(seedsPlacement[s].transform.position.x, (seedsPlacement[s].transform.position.y - 0.001f), seedsPlacement[s].transform.position.z);
+						seedsPlacement[s].transform.position = newY;
+					}
+					collide = false;
 				}
                 else
                 {
@@ -132,6 +137,12 @@ public class BORDGAEMXD : MonoBehaviour
 												 (pivot[k].transform.position.z - (smallRadius - seedDiameter)),
 												 (pivot[k].transform.position.z + (smallRadius - seedDiameter)))));
 					seedsPlacement[s].transform.position = newPos;
+					while (!collide)
+					{
+						Vector3 newY = new Vector3(seedsPlacement[s].transform.position.x, (seedsPlacement[s].transform.position.y - 0.001f), seedsPlacement[s].transform.position.z);
+						seedsPlacement[s].transform.position = newY;
+					}
+					collide = false;
 				}
 				
 				if (visualLogging) Debug.Log("In hole " + (k + 1) + " there is " + pivot[k].name + "; placing seed number " + (s + 1));
