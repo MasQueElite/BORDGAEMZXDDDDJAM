@@ -121,12 +121,12 @@ public class BORDGAEMXD : MonoBehaviour
 												 (pivot[k].transform.position.z - (storeSmallRadius - seedDiameter)),
 												 (pivot[k].transform.position.z + (storeSmallRadius - seedDiameter)))));
 					seedsPlacement[s].transform.position = newPos;
-					while (!collide)
+					/*/while (!collide)
                     {
 						Vector3 newY = new Vector3(seedsPlacement[s].transform.position.x, (seedsPlacement[s].transform.position.y - 0.001f), seedsPlacement[s].transform.position.z);
 						seedsPlacement[s].transform.position = newY;
 					}
-					collide = false;
+					collide = false;/*/
 				}
                 else
                 {
@@ -138,12 +138,12 @@ public class BORDGAEMXD : MonoBehaviour
 												 (pivot[k].transform.position.z - (smallRadius - seedDiameter)),
 												 (pivot[k].transform.position.z + (smallRadius - seedDiameter)))));
 					seedsPlacement[s].transform.position = newPos;
-					while (!collide)
+					/*/while (!collide)
 					{
 						Vector3 newY = new Vector3(seedsPlacement[s].transform.position.x, (seedsPlacement[s].transform.position.y - 0.001f), seedsPlacement[s].transform.position.z);
 						seedsPlacement[s].transform.position = newY;
 					}
-					collide = false;
+					collide = false;/*/
 				}
 				
 				if (visualLogging) Debug.Log("In hole " + (k + 1) + " there is " + pivot[k].name + "; placing seed number " + (s + 1));
@@ -154,7 +154,13 @@ public class BORDGAEMXD : MonoBehaviour
 
 	void colorSeeds()
     {
-		Debug.Log("Done. All are white.");
+		Color32[] colors = new Color32[10] { new Color32(255, 0, 0, 255), new Color32(0, 255, 0, 255), new Color32(0, 0, 255, 255), new Color32(255, 0, 0, 255), new Color32(255, 255, 0, 255), new Color32(255, 0, 255, 255), new Color32(0, 255, 255, 255), new Color32(255, 255, 255, 255), new Color32(0, 0, 0, 255), new Color32(128, 128, 128, 255) };
+		for (int i = 0; i < 98; i++)
+        {
+			int n = UnityEngine.Random.Range(0, 10);
+			seedsPlacement[i].GetComponent<MeshRenderer>().material.Color32 = colors[n];
+        }
+		Debug.Log("Done.");
     }
 
 	void OnCollisionEnter(Collision collision)
