@@ -194,6 +194,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 114157803009249996, guid: 68d32cda524a07841bf6fa58c58820d9,
+        type: 2}
+      propertyPath: ModuleType
+      value: congkakMQEktane1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 68d32cda524a07841bf6fa58c58820d9, type: 2}
   m_IsPrefabParent: 0
