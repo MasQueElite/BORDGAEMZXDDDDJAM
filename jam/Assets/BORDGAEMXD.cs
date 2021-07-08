@@ -58,7 +58,7 @@ public class BORDGAEMXD : MonoBehaviour
 				  ", which is in the hole: " +
 					(Array.IndexOf(mostSeeds, mostSeeds.Max()) + 1) +
 				  ".");/*/
-		Debug.LogFormat("[Congkak {0}] The maximum seeds in a hole is: {1}, which is in the hole: {2}.", moduleId, mostSeeds.Max(), ((Array.IndexOf(mostSeeds, mostSeeds.Max())) + 1));
+		Debug.LogFormat("[Congkak #{0}] The maximum seeds in a hole is: {1}, which is in the hole: {2}.", moduleId, mostSeeds.Max(), ((Array.IndexOf(mostSeeds, mostSeeds.Max())) + 1));
 	}
 
 	void logArray (int[] arr, string extraMsg = "")
@@ -67,7 +67,7 @@ public class BORDGAEMXD : MonoBehaviour
 		for (int i = 0; i < arr.Length; i++)
 			str += arr[i] + " ";
 
-		Debug.LogFormat("[Congkak {0}] {1} {2}", moduleId, extraMsg, str);
+		Debug.LogFormat("[Congkak #{0}] {1} {2}", moduleId, extraMsg, str);
 	}
 
 	void distribute ()
@@ -97,9 +97,9 @@ public class BORDGAEMXD : MonoBehaviour
 		float smallHeight = Math.Abs(pivot[0].transform.position.y - pivot[16].transform.position.y);
 		//float storeSmallRadius = Math.Abs(pivot[15].transform.position.z - pivot[18].transform.position.z);
 		//float storeLargeRadius = Math.Abs(pivot[15].transform.position.x - pivot[17].transform.position.x);
-		if (visualLogging) Debug.LogFormat("[Congkak {0}] {1} and {2} give a distance of: {3}", moduleId, pivot[0].name, pivot[16].name, smallRadius);
+		if (visualLogging) Debug.LogFormat("[Congkak #{0}] {1} and {2} give a distance of: {3}", moduleId, pivot[0].name, pivot[16].name, smallRadius);
 		float seedDiameter = ReferenceSeed.bounds.size.x*2;
-		if (visualLogging) Debug.LogFormat("[Congkak {0}] The diameter of a seed is: {1}", moduleId, seedDiameter);
+		if (visualLogging) Debug.LogFormat("[Congkak #{0}] The diameter of a seed is: {1}", moduleId, seedDiameter);
 		for (int k = 0, s = 0; k < 16; k++)
 		{
 			for (int l = 0; l < seeds[k]; l++, s++)
@@ -202,9 +202,9 @@ public class BORDGAEMXD : MonoBehaviour
 		{
 			if (seeds[holeNumber] > 0)
 			{
-				if (codeLogging) Debug.LogFormat("[Congkak {0}] ----------------- PLAYING HOLE {1}:", moduleId, (holeNumber + 1));
+				if (codeLogging) Debug.LogFormat("[Congkak #{0}] ----------------- PLAYING HOLE {1}:", moduleId, (holeNumber + 1));
 				playAturn(holeNumber, false);
-				if (codeLogging) Debug.LogFormat("[Congkak {0}] Total number of seeds: {1} for hole: {2}", moduleId, Enumerable.Sum(seeds), (holeNumber + 1)); //debug
+				if (codeLogging) Debug.LogFormat("[Congkak #{0}] Total number of seeds: {1} for hole: {2}", moduleId, Enumerable.Sum(seeds), (holeNumber + 1)); //debug
 																															  //this should ALWAYS be 98
 				getTotalPts(holeNumber, result);
 				reset();
@@ -229,13 +229,13 @@ public class BORDGAEMXD : MonoBehaviour
 				else if (hn >= 16) hn = 0;
 				seeds[hn]++;
 			}
-			if (codeLogging) { Debug.LogFormat("[Congkak {0}] Ended in hole: {1}", moduleId, (hn + 1)); logArray(seeds); }
+			if (codeLogging) { Debug.LogFormat("[Congkak #{0}] Ended in hole: {1}", moduleId, (hn + 1)); logArray(seeds); }
 			if (seeds[hn] == 1 && hn >= bounds[0] && hn < bounds[3])
 			{// Accounting for when last seed lands on own empty hole
 				seeds[bounds[1]] += seeds[hn] + seeds[14 - hn];
 				seeds[hn] = 0;
 				seeds[14 - hn] = 0;
-				if (codeLogging) { Debug.LogFormat("[Congkak {0}] Capturing hole {1}", moduleId, (14 - hn + 1)); logArray(seeds); }
+				if (codeLogging) { Debug.LogFormat("[Congkak #{0}] Capturing hole {1}", moduleId, (14 - hn + 1)); logArray(seeds); }
 				break;
 			}
 		}
@@ -246,7 +246,7 @@ public class BORDGAEMXD : MonoBehaviour
 		for (int i = 0; i < 7; i++)
 			result[hn] += seeds[i];
 		result[hn] += seeds[seeds.Length - 1];
-		if (codeLogging) Debug.LogFormat("[Congkak {0}] Points gained if the player played this hole: {1} with value {2}", moduleId, result[hn], initialState[hn]);
+		if (codeLogging) Debug.LogFormat("[Congkak #{0}] Points gained if the player played this hole: {1} with value {2}", moduleId, result[hn], initialState[hn]);
 	}
 
 	void reset ()
@@ -262,12 +262,12 @@ public class BORDGAEMXD : MonoBehaviour
 			if (ms[hole.name[hole.name.Length - 1] - '0' - 1] == ms.Max())
 			{
 				moduleSolved = true;
-				Debug.LogFormat("[Congkak {0}] You selected the correct hole. Module solved.", moduleId);
+				Debug.LogFormat("[Congkak #{0}] You selected the correct hole. Module solved.", moduleId);
 				Module.HandlePass();
 			}
 			else
 			{
-				Debug.LogFormat("[Congkak {0}] You selected the wrong hole. Strike.", moduleId);
+				Debug.LogFormat("[Congkak #{0}] You selected the wrong hole. Strike.", moduleId);
 				Module.HandleStrike();
 			}
 		}
