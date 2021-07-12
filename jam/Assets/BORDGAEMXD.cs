@@ -16,6 +16,7 @@ public class BORDGAEMXD : MonoBehaviour
 	public KMSelectable[] yourHoles;
 	public GameObject[] seedsPlacement;
 	public GameObject[] pivot;
+	public Material[] colours;
 	public Renderer ReferenceSeed;
 
 	private int[] seeds = Enumerable.Repeat(7, 16).ToArray();
@@ -40,10 +41,10 @@ public class BORDGAEMXD : MonoBehaviour
 	void Awake ()
 	{
 		moduleId = moduleIdCounter++;
-		foreach (KMSelectable hole in yourHoles)
+		for (int i = 0; i < yourHoles.Length; i++)
 		{
-			KMSelectable selectedHole = hole;
-			hole.OnInteract += delegate () { holeHandler(selectedHole, mostSeeds); return false; };
+			int j = i;
+			yourHoles[j].OnInteract += () => { holeHandler(j); return false; };
 		}
 	}
 
@@ -76,7 +77,7 @@ public class BORDGAEMXD : MonoBehaviour
 		seeds[15] = 0;
 		int rng;
 		int turns = UnityEngine.Random.Range(8, 15 + 1); //range: [x, y[
-		turn = turns % 2 == 0 ? false : true;
+		turn = turns % 2 != 0;
 		for (int j = 0; j <= turns; j++)
 		{
 			do rng = UnityEngine.Random.Range(getBoundsFromPlayer(turn, false), getBoundsFromPlayer(!turn, true));
@@ -87,97 +88,52 @@ public class BORDGAEMXD : MonoBehaviour
 		}
 		Array.Copy(seeds, initialState, seeds.Length);
 
-		//colorSeeds();
+		colorSeeds();
 		positionSeeds();
 	}
 
     void positionSeeds ()
     {
-		float smallRadius = Math.Abs(pivot[0].transform.position.x - pivot[16].transform.position.x);
-		float smallHeight = Math.Abs(pivot[0].transform.position.y - pivot[16].transform.position.y);
-		//float storeSmallRadius = Math.Abs(pivot[15].transform.position.z - pivot[18].transform.position.z);
-		//float storeLargeRadius = Math.Abs(pivot[15].transform.position.x - pivot[17].transform.position.x);
-		if (visualLogging) Debug.LogFormat("[Congkak #{0}] {1} and {2} give a distance of: {3}", moduleId, pivot[0].name, pivot[16].name, smallRadius);
-		float seedDiameter = ReferenceSeed.bounds.size.x*2;
-		if (visualLogging) Debug.LogFormat("[Congkak #{0}] The diameter of a seed is: {1}", moduleId, seedDiameter);
+		float sphereRadius = 4.2f;
+		float seedRadius = .5f * .002f;
+		float circleRadius = sphereRadius * (2 / 3f);
+		int seedCount = 0;
+		Vector3 posToCheck;
+		Collider[] hitColliders = new Collider[1];
 		for (int k = 0, s = 0; k < 16; k++)
 		{
+			var cupPos = pivot[k].transform;
+			bool seedDiff = k % 8 == 7;
 			for (int l = 0; l < seeds[k]; l++, s++)
-			{/*/
-				if (k == 7 || k == 15)
-                {
-					Vector3 newPos = (new Vector3(UnityEngine.Random.Range(
-												(pivot[k].transform.position.x - (storeLargeRadius - seedDiameter)), //0.003f
-												(pivot[k].transform.position.x + (storeLargeRadius - seedDiameter))),
-											 0.03f,
-											 UnityEngine.Random.Range(
-												 (pivot[k].transform.position.z - (storeSmallRadius - seedDiameter)),
-												 (pivot[k].transform.position.z + (storeSmallRadius - seedDiameter)))));
-					seedsPlacement[s].transform.position = newPos;
-					while (!collide)
-                    {
-						Vector3 newY = new Vector3(seedsPlacement[s].transform.position.x, (seedsPlacement[s].transform.position.y - 0.001f), seedsPlacement[s].transform.position.z);
-						seedsPlacement[s].transform.position = newY;
-					}
-					collide = false;/*/
-				//}
-                //else
-                //{
-					Vector3 newPos = (new Vector3(UnityEngine.Random.Range(
-												(pivot[k].transform.position.x - (smallRadius - seedDiameter)),
-												(pivot[k].transform.position.x + (smallRadius - seedDiameter))),
-											 (pivot[0].transform.position.y + seedDiameter/2),
-											 UnityEngine.Random.Range(
-												 (pivot[k].transform.position.z - (smallRadius - seedDiameter)),
-												 (pivot[k].transform.position.z + (smallRadius - seedDiameter)))));
-					seedsPlacement[s].transform.position = newPos;
-				/*/
-						newPos = (new Vector3(seedsPlacement[s].transform.position.x,
-											 (pivot[0].transform.position.y + seedDiameter/4) +
-												smallHeight*pivot[0].transform.position.x/seedsPlacement[s].transform.position.x,
-											 seedsPlacement[s].transform.position.z));
-				seedsPlacement[s].transform.position = newPos;
-				seedsPlacement[s].transform.position = pivot[0].transform.position;
-				seedsPlacement[s].transform.position = new Vector3(UnityEngine.Random.Range(
-												(pivot[0].transform.position.x - (smallRadius - seedDiameter / 4)),
-												(pivot[0].transform.position.x + (smallRadius - seedDiameter / 4))),
-																	0,
-																	seedsPlacement[s].transform.position.z);
-				newPos = (new Vector3(seedsPlacement[s].transform.position.x,
-				((pivot[0].transform.position.y + seedDiameter / 4) +
-				Math.Abs(seedsPlacement[s].transform.position.x - pivot[0].transform.position.x)),
-				seedsPlacement[s].transform.position.z));
-				seedsPlacement[s].transform.position = newPos;
-
-				Debug.Log("Base height: " + (pivot[0].transform.position.y + seedDiameter / 4) +
-						  "; subtract seed Xpos " + seedsPlacement[s].transform.position.x +
-						  " and pivot Xpos " + pivot[0].transform.position.x + " gives: " +
-						  Math.Abs(seedsPlacement[s].transform.position.x - pivot[0].transform.position.x));/*/
-
-				/*/while (!collide)
+			{
+				var seed = seedsPlacement[seedCount++].transform;
+				seed.parent = cupPos;
+				do
 				{
-					Vector3 newY = new Vector3(seedsPlacement[s].transform.position.x, (seedsPlacement[s].transform.position.y - 0.001f), seedsPlacement[s].transform.position.z);
-					seedsPlacement[s].transform.position = newY;
-				}
-				collide = false;/*/
-				//}
 
-				//if (visualLogging) Debug.Log("In hole " + (k + 1) + " there is " + pivot[k].name + "; placing seed number " + (s + 1));
+
+					var randLoc = UnityEngine.Random.insideUnitCircle * circleRadius;
+					float xDiff = (randLoc.x * randLoc.x);
+					float yDiff = (randLoc.y * randLoc.y);
+					if (seedDiff) { xDiff /= 1.5f * 1.5f; yDiff /= 1.95f * 1.95f; }
+					float sqr = ((sphereRadius * sphereRadius) - xDiff - yDiff);
+					float resultZ = -Mathf.Sqrt(Mathf.Abs(sqr));
+					posToCheck = new Vector3(randLoc.x, resultZ + seedRadius, randLoc.y);
+				} while (Physics.OverlapSphereNonAlloc(cupPos.TransformPoint(posToCheck), seedRadius / 2, hitColliders, 1 << 15) > 0);
+				seed.localPosition = posToCheck;
 			}
 		}
 	}
-	/*/
+
 	void colorSeeds()
     {
-		Color32[] colors = new Color32[10] { new Color32(255, 0, 0, 255), new Color32(0, 255, 0, 255), new Color32(0, 0, 255, 255), new Color32(255, 0, 0, 255), new Color32(255, 255, 0, 255), new Color32(255, 0, 255, 255), new Color32(0, 255, 255, 255), new Color32(255, 255, 255, 255), new Color32(0, 0, 0, 255), new Color32(128, 128, 128, 255) };
 		for (int i = 0; i < 98; i++)
         {
 			int n = UnityEngine.Random.Range(0, 10);
-			seedsPlacement[i].GetComponent<MeshRenderer>().material.Color32 = colors[n];
+			seedsPlacement[i].GetComponent<MeshRenderer>().material = colours[n];
         }
-		Debug.Log("Done.");
     }
-
+	/*/
 	void OnCollisionEnter(Collision collision)
     {
 		collide = true;
@@ -254,12 +210,11 @@ public class BORDGAEMXD : MonoBehaviour
 		Array.Copy(initialState, seeds, initialState.Length);
 	}
 
-	void holeHandler (KMSelectable hole, int[] ms)
+	void holeHandler (int hole)
 	{
-		int maxSeeds = ms.Max();
 		if (moduleSolved == false)
 		{
-			if (ms[hole.name[hole.name.Length - 1] - '0' - 1] == ms.Max())
+			if (mostSeeds[hole] == mostSeeds.Max())
 			{
 				moduleSolved = true;
 				Debug.LogFormat("[Congkak #{0}] You selected the correct hole. Module solved.", moduleId);
