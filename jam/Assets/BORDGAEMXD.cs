@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using KModkit;
+using System.Text.RegularExpressions;
 
 public class BORDGAEMXD : MonoBehaviour
 {
-
 	public KMBombInfo Bomb;
 	public KMBombModule Module;
 	public KMAudio Audio;
 
-	public TextMesh[] holes;
 	public KMSelectable[] yourHoles;
 	public GameObject[] seedsPlacement;
 	public GameObject[] pivot;
@@ -26,8 +23,6 @@ public class BORDGAEMXD : MonoBehaviour
 
 	private bool turn;
 	private bool codeLogging;
-	private bool visualLogging;
-	private bool collide;
 
 	static int moduleIdCounter = 1;
 	int moduleId;
@@ -51,9 +46,9 @@ public class BORDGAEMXD : MonoBehaviour
 	void Start ()
 	{
 		distribute();
-		logArray(seeds, "Initial state: ");
+		logArray(seeds, "Initial state:");
 		Array.Copy(getTheMost(), mostSeeds, mostSeeds.Length);
-		logArray(mostSeeds, "Total points after playing each hole: ");
+		logArray(mostSeeds, "Total points after playing each hole:");
 		/*/Debug.LogFormat("The maximum seeds in a hole is: " +
 					mostSeeds.Max() +
 				  ", which is in the hole: " +
@@ -76,7 +71,7 @@ public class BORDGAEMXD : MonoBehaviour
 		seeds[7] = 0;
 		seeds[15] = 0;
 		int rng;
-		int turns = UnityEngine.Random.Range(8, 15 + 1); //range: [x, y[
+		int turns = UnityEngine.Random.Range(8, 15 + 1); //range: [x, y]
 		turn = turns % 2 != 0;
 		for (int j = 0; j <= turns; j++)
 		{
@@ -94,6 +89,7 @@ public class BORDGAEMXD : MonoBehaviour
 
     void positionSeeds ()
     {
+		//Collision detection does not work currently
 		float sphereRadius = 4.2f;
 		float seedRadius = .5f * .002f;
 		float circleRadius = sphereRadius * (2 / 3f);
@@ -110,8 +106,6 @@ public class BORDGAEMXD : MonoBehaviour
 				seed.parent = cupPos;
 				do
 				{
-
-
 					var randLoc = UnityEngine.Random.insideUnitCircle * circleRadius;
 					float xDiff = (randLoc.x * randLoc.x);
 					float yDiff = (randLoc.y * randLoc.y);
@@ -133,11 +127,6 @@ public class BORDGAEMXD : MonoBehaviour
 			seedsPlacement[i].GetComponent<MeshRenderer>().material = colours[n];
         }
     }
-	/*/
-	void OnCollisionEnter(Collision collision)
-    {
-		collide = true;
-    }/*/
 
     int int2bool (bool originalBool)
 	{
@@ -228,5 +217,48 @@ public class BORDGAEMXD : MonoBehaviour
 		}
 		else
 			Debug.LogFormat(funnyPhrases[UnityEngine.Random.Range(0, funnyPhrases.Length)]);
+	}
+
+	//twitch plays
+	#pragma warning disable 414
+	private readonly string TwitchHelpMessage = @"!{0} hole <#> [Chooses the hole in the specified position '#' from bottom-right to top-left (1-7)]";
+	#pragma warning restore 414
+	IEnumerator ProcessTwitchCommand(string command)
+	{
+		string[] parameters = command.Split(' ');
+		if (Regex.IsMatch(parameters[0], @"^\s*hole\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+		{
+			yield return null;
+			if (parameters.Length > 2)
+			{
+				yield return "sendtochaterror Too many parameters!";
+			}
+			else if (parameters.Length == 2)
+			{
+				int temp = -1;
+				if (!int.TryParse(parameters[1], out temp))
+				{
+					yield return "sendtochaterror The specified position '" + parameters[1] + "' is invalid!";
+					yield break;
+				}
+				if (temp < 1 || temp > 7)
+				{
+					yield return "sendtochaterror The specified position '" + parameters[1] + "' is out of range 1-7!";
+					yield break;
+				}
+				yourHoles[temp - 1].OnInteract();
+			}
+			else if (parameters.Length == 1)
+			{
+				yield return "sendtochaterror Please specify the position of the hole you wish to choose!";
+			}
+			yield break;
+		}
+	}
+
+	IEnumerator TwitchHandleForcedSolve()
+	{
+		yield return null;
+		yourHoles[Array.IndexOf(mostSeeds, mostSeeds.Max())].OnInteract();
 	}
 }
