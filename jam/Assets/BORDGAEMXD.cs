@@ -89,7 +89,7 @@ public class BORDGAEMXD : MonoBehaviour
 
     void positionSeeds ()
     {
-		//Collision detection does not work currently
+		redo:
 		float sphereRadius = 4.2f;
 		float seedRadius = .5f * .002f;
 		float circleRadius = sphereRadius * (2 / 3f);
@@ -104,8 +104,12 @@ public class BORDGAEMXD : MonoBehaviour
 			{
 				var seed = seedsPlacement[seedCount++].transform;
 				seed.parent = cupPos;
+				int ct = 0;
 				do
 				{
+					ct++;
+					if (ct == 1000)
+						goto redo;
 					var randLoc = UnityEngine.Random.insideUnitCircle * circleRadius;
 					float xDiff = (randLoc.x * randLoc.x);
 					float yDiff = (randLoc.y * randLoc.y);
