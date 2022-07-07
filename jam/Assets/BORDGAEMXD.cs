@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using UnityEngine;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 public class BORDGAEMXD : MonoBehaviour
 {
@@ -89,38 +90,44 @@ public class BORDGAEMXD : MonoBehaviour
 
     void positionSeeds ()
     {
-		redo:
 		float sphereRadius = 4.2f;
 		float seedRadius = .5f * .002f;
 		float circleRadius = sphereRadius * (2 / 3f);
 		int seedCount = 0;
 		Vector3 posToCheck;
-		Collider[] hitColliders = new Collider[1];
-		for (int k = 0, s = 0; k < 16; k++)
+		List<SphereCollider> placedColliders;
+		for (int k = 0; k < 16; k++)
 		{
+			placedColliders = new List<SphereCollider>();
 			var cupPos = pivot[k].transform;
 			bool seedDiff = k % 8 == 7;
-			for (int l = 0; l < seeds[k]; l++, s++)
+			for (int l = 0; l < seeds[k]; l++)
 			{
 				var seed = seedsPlacement[seedCount++].transform;
 				seed.parent = cupPos;
-				int ct = 0;
-				do
-				{
-					ct++;
-					if (ct == 1000)
-						goto redo;
-					var randLoc = UnityEngine.Random.insideUnitCircle * circleRadius;
-					float xDiff = (randLoc.x * randLoc.x);
-					float yDiff = (randLoc.y * randLoc.y);
-					if (seedDiff) { xDiff /= 1.5f * 1.5f; yDiff /= 1.95f * 1.95f; }
-					float sqr = ((sphereRadius * sphereRadius) - xDiff - yDiff);
-					float resultZ = -Mathf.Sqrt(Mathf.Abs(sqr));
-					posToCheck = new Vector3(randLoc.x, resultZ + seedRadius, randLoc.y);
-				} while (Physics.OverlapSphereNonAlloc(cupPos.TransformPoint(posToCheck), seedRadius / 2, hitColliders, 1 << 15) > 0);
+				redo:
+				var randLoc = UnityEngine.Random.insideUnitCircle * circleRadius;
+				float xDiff = (randLoc.x * randLoc.x);
+				float yDiff = (randLoc.y * randLoc.y);
+				if (seedDiff) { xDiff /= 1.5f * 1.5f; yDiff /= 1.95f * 1.95f; }
+				float sqr = ((sphereRadius * sphereRadius) - xDiff - yDiff);
+				float resultZ = -Mathf.Sqrt(Mathf.Abs(sqr));
+				posToCheck = new Vector3(randLoc.x, resultZ + seedRadius, randLoc.y);
 				seed.localPosition = posToCheck;
+				for (int b = 0; b < placedColliders.Count; b++)
+                {
+					if (spheresOverlap(placedColliders[b], seed.gameObject.GetComponent<SphereCollider>()))
+						goto redo;
+				}
+				placedColliders.Add(seed.gameObject.GetComponent<SphereCollider>());
 			}
 		}
+	}
+
+	bool spheresOverlap(SphereCollider a, SphereCollider b)
+	{
+		float dist = Vector3.Distance(a.transform.localPosition, b.transform.localPosition);
+		return dist < a.radius + b.radius;
 	}
 
 	void colorSeeds()
